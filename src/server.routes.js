@@ -10,7 +10,7 @@ router.get('/', (req, res) =>
 
 mountRoutes();
 
-// Mounts all routes in based on file name.
+// Mounts all routes based on file name.
 function mountRoutes() {
   const files = glob.sync('src/resources/*/*.routes.js');
 
