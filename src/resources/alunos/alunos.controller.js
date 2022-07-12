@@ -66,7 +66,11 @@ const apiAlunos = {
 
       if (!curso) throw new Error('Esse curso não existe!');
 
-      const result = await curso.addAlunos(idAluno);
+      const aluno = await Alunos.findByPk(idAluno);
+
+      if (!aluno) throw new Error('Esse aluno não existe!');
+
+      const result = await aluno.addCurso(idCurso);
 
       return res.status(200).json(result);
     } catch (error) {
@@ -74,6 +78,44 @@ const apiAlunos = {
       next(error);
     }
 
-  }
+  },
+
+  async getCursosAluno(req, res, next) {
+    const { idAluno } = req.params;
+    try {
+      const aluno = await Alunos.findByPk(idAluno,{
+        include: [{
+          model: Cursos,
+          required: false,
+          as: "cursos"
+        }]
+      });
+      res.status(200).json(aluno);
+    } catch (error) {
+      console.log(`Erro ao recuperar aluno com id: ${idAluno} - ${error}`);
+      next(error);
+    }
+  },
+
+  async deletarCurso(req, res, next) {
+    const { idAluno, idCurso } = req.params;
+
+     try {
+      const curso = await Cursos.findByPk(idCurso);
+
+      if (!curso) throw new Error('Esse curso não existe!');
+
+      const aluno = await Alunos.findByPk(idAluno);
+
+      if (!aluno) throw new Error('Esse aluno não existe!');
+
+      const result = await aluno.removeCurso(idCurso);
+
+      return res.status(200).json(result);
+    } catch (error) {
+      console.log(`Erro ao cadastrar curso - ${error}`);
+      next(error);
+    }
+  },
 }
 module.exports = apiAlunos;

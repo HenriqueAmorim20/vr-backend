@@ -58,21 +58,21 @@ const apiCursos = {
     }
   },
 
-  async cadastrarAluno(req, res, next) {
-    const { idCurso, idAluno } = req.params;
-
+  async getAlunosCurso(req, res, next) {
+    const { idCurso } = req.params;
     try {
-      const aluno = await Alunos.findByPk(idAluno);
-
-      if (!aluno) throw new Error('Esse aluno não existe!');
-
-      const result = await aluno.addCursos(idCurso);
-
-      return res.status(200).json(result);
+      const curso = await Cursos.findByPk(idCurso,{
+        include: [{
+          model: Alunos,
+          required: false,
+          as: "alunos"
+        }]
+      });
+      res.status(200).json(curso);
     } catch (error) {
-      console.log(`Erro ao cadastrar aluno - ${error}`);
+      console.log(`Erro ao recuperar curso com id: ${idCurso} - ${error}`);
       next(error);
     }
-  }
+  },
 }
 module.exports = apiCursos;
